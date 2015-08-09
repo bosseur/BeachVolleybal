@@ -1,0 +1,20 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
+    </style>
+
+    <!-- ActionBar title text -->
+    <style name="MyActionBarStyle"
+        parent="Base.ThemeOverlay.AppCompat.Dark">
+        <item name="android:windowContentOverlay">@drawable/actionbar_shadow</item>
+        <item name="android:background">@color/ColorPrimary</item>
+    </style>
+
+    <style name="PagerSlidingTabStripStyle" parent="">
+        <item name="android:textColorPrimary">@color/event_uneven</item>
+    </style>
+
+</resources>

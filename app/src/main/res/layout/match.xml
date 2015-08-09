@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/event_uneven"
+        android:elevation="1dp">
+
+        <TableRow  >
+
+            <TextView android:id="@+id/matchNumber"
+                android:layout_height="match_parent"
+                android:layout_width="22dp"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textColor="@color/event_text"/>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <TableRow >
+                    <TextView android:id="@+id/teamA"
+                        android:layout_height="match_parent"
+                        android:layout_width="120dp"
+                        android:textAlignment="center"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/event_text"/>
+                    <TextView android:id="@+id/pointsSet1TeamA"
+                        android:layout_height="match_parent"
+                        android:layout_width="40dp"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:textColor="@color/event_text"/>
+                    <TextView android:id="@+id/pointsSet2TeamA"
+                        android:layout_height="match_parent"
+                        android:layout_width="40dp"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:textColor="@color/event_text"/>
+                    <TextView android:id="@+id/pointsSet3TeamA"
+                        android:layout_height="match_parent"
+                        android:layout_width="40dp"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:textColor="@color/event_text"/>
+                </TableRow>
+                <TableRow>
+                    <TextView android:id="@+id/teamB"
+                        android:layout_height="match_parent"
+                        android:layout_width="120dp"
+                        android:textAlignment="center"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/event_text"/>
+                    <TextView android:id="@+id/pointsSet1TeamB"
+                        android:layout_height="match_parent"
+                        android:layout_width="40dp"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:textColor="@color/event_text"/>
+                    <TextView android:id="@+id/pointsSet2TeamB"
+                        android:layout_height="match_parent"
+                        android:layout_width="40dp"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:textColor="@color/event_text"/>
+                    <TextView android:id="@+id/pointsSet3TeamB"
+                        android:layout_height="match_parent"
+                        android:layout_width="40dp"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:textColor="@color/event_text"/>
+                </TableRow>
+            </TableLayout>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

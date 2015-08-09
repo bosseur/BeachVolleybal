@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="event_uneven">#FED800</color>
+    <color name="event_text">#053B8A</color>
+    <color name="color_even">#FFFFFF</color>
+    <color name="event_even">#FFFFFF</color>
+    <color name="ColorPrimary">#053B8A</color>
+    <color name="ColorPrimaryDark">#032960</color>
+    <color name="tabsScrollColor">#5075ad</color>
+    <color name="gradient_start">#B8C1CF</color>
+</resources>

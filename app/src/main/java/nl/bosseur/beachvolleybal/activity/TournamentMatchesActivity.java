@@ -1,0 +1,307 @@
+package nl.bosseur.beachvolleybal.activity;
+
+import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import nl.bosseur.beachvolleybal.R;
+import nl.bosseur.beachvolleybal.model.match.BeachRound;
+import nl.bosseur.beachvolleybal.model.match.TournamentMatch;
+import nl.bosseur.beachvolleybal.model.tournament.BeachTournament;
+import nl.bosseur.beachvolleybal.model.util.BeachMatchesXmlParser;
+import nl.bosseur.beachvolleybal.tasks.FivbRequestTask;
+import nl.bosseur.beachvolleybal.view.SlidingTabLayout;
+
+public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
+
+    private BeachTournament tournament;
+    private int phase = 4;
+    private List<List<BeachRound>> rounds = new ArrayList<>();
+    private CharSequence[] titles;
+    private boolean isDoubleGender = false;
+
+    private SlidingTabLayout mSlidingTabLayout;
+
+    /**
+     * A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
+     */
+    private ViewPager mViewPager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_tournament_matches);
+
+        tournament = (BeachTournament) getIntent().getSerializableExtra(WorldTourActivity.TOURNAMENT);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setTitle(tournament.getTile());
+        setSupportActionBar(toolbar);
+
+        if( tournament.getFemaleTournamentCode() != null && tournament.getMaleTournamentCode() != null ){
+            isDoubleGender = true;
+            titles = new CharSequence[]{"Male", "Female"};
+        }else if( tournament.getFemaleTournamentCode() != null){
+            titles = new CharSequence[]{"Female"};
+        }else{
+            titles = new CharSequence[]{"Male"};
+        }
+
+        buscarMatches();
+
+
+    }
+
+    private void buscarMatches(){
+        this.rounds.clear();
+        FivbRequestTask task = new FivbRequestTask(this);
+        task.execute("Retrieving matches\n" + tournament.getTile());
+    }
+
+    @Override
+    public String createFivbTourRequest() {
+        String requestRounds = "";
+        String requestMatches = "";
+
+        if( tournament.getFemaleTournamentCode() != null && tournament.getMaleTournamentCode() != null ){
+            requestRounds = createRequestRound(tournament.getMaleTournamentCode());
+            requestRounds += createRequestRound(tournament.getFemaleTournamentCode());
+            requestMatches = createRequestMatches(tournament.getMaleTournamentCode());
+            requestMatches += createRequestMatches(tournament.getFemaleTournamentCode());
+        }else{
+            requestRounds   = createRequestRound(tournament.getNumber().toString());
+            requestMatches  = createRequestMatches( tournament.getNumber().toString() );
+        }
+
+
+        return "<Requests>" + requestRounds + requestMatches + "</Requests>";
+    }
+
+    private String createRequestMatches(String numberTournament) {
+        return "<Request Type=\"GetBeachMatchList\" " +
+                "Fields=\"NoTournament NoInTournament NoTeamA NoTeamB TeamAFederationCode TeamBFederationCode NoRound LocalDate LocalTime TeamAName TeamBName Court PointsTeamASet1 PointsTeamBSet1 PointsTeamASet2 PointsTeamBSet2 PointsTeamASet3 PointsTeamBSet3 DurationSet1 DurationSet2 DurationSet3 ResultType TeamAPositionInMainDraw TeamBPositionInMainDraw\">"+
+                "<Filter NoTournament=\"" + numberTournament + "\" InMainDraw=\"" + (this.phase == 4 ? "true" : "false") + "\" />"+
+                "</Request>";
+    }
+
+    private String createRequestRound(String numberTournament) {
+        return "<Request Type=\"GetBeachRoundList\" " +
+                "Fields=\"NoTournament Code Name Bracket Phase StartDate EndDate No \">"+
+                "<Filter NoTournament=\"" + numberTournament + "\"/>"+
+                "</Request>";
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_world_tour, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.refresh) {
+            buscarMatches();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void update(String result) {
+        List<List<BeachRound>> rounds = null;
+        try {
+            rounds = BeachMatchesXmlParser.unmarschall(result);
+        }catch (Exception ex){
+            Log.e("Error no parse", ex.getMessage(), ex);
+            Toast.makeText(this,"Error parsing match data", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        for (List<BeachRound> round : rounds) {
+            this.rounds.add(filter(round));
+        }
+
+        if( rounds.isEmpty() ){
+            Toast.makeText(this,"Information not yet available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        mViewPager = (ViewPager) this.findViewById(R.id.pager);
+
+        mViewPager.setAdapter(new MatchesPagerAdapter(titles, this.rounds));
+
+        // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
+        // it's PagerAdapter set.
+        mSlidingTabLayout = (SlidingTabLayout) this.findViewById(R.id.tabs);
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
+            }
+
+            @Override
+            public int getDividerColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
+            }
+        });
+        mSlidingTabLayout.setViewPager(mViewPager);
+
+        /*
+
+        */
+
+    }
+
+    private List<BeachRound> filter(List<BeachRound> rounds) {
+        List<BeachRound> roundsSelectedPhase = new ArrayList<BeachRound>();
+        for (BeachRound round: rounds){
+            if( round.getPhase() == this.phase ){
+                roundsSelectedPhase.add( round );
+            }
+        }
+        return roundsSelectedPhase;
+    }
+
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} used to display pages in this sample.
+     * The individual pages are simple and just display two lines of text. The important section of
+     * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
+     * {@link nl.bosseur.beachvolleybal.view.SlidingTabLayout}.
+     */
+    class MatchesPagerAdapter extends PagerAdapter {
+
+        private CharSequence[] titles;
+        private List<List<BeachRound>> beachMatches;
+
+        public MatchesPagerAdapter(CharSequence[] titles, List<List<BeachRound>> beachMatches) {
+            this.titles = titles;
+            this.beachMatches = beachMatches;
+        }
+
+        /**
+         * @return the number of pages to display
+         */
+        @Override
+        public int getCount() {
+            return titles.length;
+        }
+
+        /**
+         * @return true if the value returned from {@link #instantiateItem(android.view.ViewGroup, int)} is the
+         * same object as the {@link View} added to the {@link android.support.v4.view.ViewPager}.
+         */
+        @Override
+        public boolean isViewFromObject(View view, Object o) {
+            return o == view;
+        }
+
+        /**
+         * Return the title of the item at {@code position}. This is important as what this method
+         * returns is what is displayed in the {@link nl.bosseur.beachvolleybal.view.SlidingTabLayout}.
+         * <p>
+         * Here we construct one using the position value, but for real application the title should
+         * refer to the item's contents.
+         */
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+
+        /**
+         * Instantiate the {@link View} which should be displayed at {@code position}. Here we
+         * inflate a layout from the apps resources and then change the text view to signify the position.
+         */
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+
+            // Inflate a new layout from our resources
+            View view = TournamentMatchesActivity.this.getLayoutInflater().inflate(R.layout.groups, container, false);
+            // Add the newly created View to the ViewPager
+            container.addView(view);
+
+            List<BeachRound> rounds = this.beachMatches.get(position);
+
+            LinearLayout layout = (LinearLayout) view.findViewById(R.id.match_root);
+            for (BeachRound round : rounds){
+
+                View viewMatches = getLayoutInflater().inflate(R.layout.group_matches, null);
+
+                TextView group = (TextView) viewMatches.findViewById(R.id.group_name);
+                group.setText(round.getName());
+
+                LinearLayout lista = (LinearLayout) viewMatches.findViewById(R.id.match_list);
+                for (TournamentMatch match: round.getMatches()){
+                    View matchView = getLayoutInflater().inflate(R.layout.match, null);
+
+
+                    TextView matchNumber = (TextView) matchView.findViewById(R.id.matchNumber);
+                    matchNumber.setText( Integer.valueOf(match.getMatchNumber()).toString() );
+
+                    TextView teamA = (TextView) matchView.findViewById(R.id.teamA);
+                    teamA.setText(match.getTeamACode() );
+
+                    TextView teamB = (TextView) matchView.findViewById(R.id.teamB);
+                    teamB.setText(match.getTeamBCode());
+
+                    TextView pointsASet1 = (TextView) matchView.findViewById(R.id.pointsSet1TeamA);
+                    pointsASet1.setText( match.getPointsTeamASet1() );
+
+                    TextView pointsASet2 = (TextView) matchView.findViewById(R.id.pointsSet2TeamA);
+                    pointsASet2.setText( match.getPointsTeamASet2() );
+
+                    TextView pointsASet3 = (TextView) matchView.findViewById(R.id.pointsSet3TeamA);
+                    pointsASet3.setText( match.getPointsTeamASet3() );
+
+                    TextView pointsBSet1 = (TextView) matchView.findViewById(R.id.pointsSet1TeamB);
+                    pointsBSet1.setText( match.getPointsTeamBSet1() );
+
+                    TextView pointsBSet2 = (TextView) matchView.findViewById(R.id.pointsSet2TeamB);
+                    pointsBSet2.setText( match.getPointsTeamBSet2() );
+
+                    TextView pointsBSet3 = (TextView) matchView.findViewById(R.id.pointsSet3TeamB);
+                    pointsBSet3.setText( match.getPointsTeamBSet3() );
+
+                    lista.addView( matchView );
+                }
+
+                layout.addView(viewMatches);
+            }
+
+            // Return the View
+            return view;
+        }
+
+        /**
+         * Destroy the item from the {@link android.support.v4.view.ViewPager}. In our case this is simply removing the
+         * {@link View}.
+         */
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+    }
+}
