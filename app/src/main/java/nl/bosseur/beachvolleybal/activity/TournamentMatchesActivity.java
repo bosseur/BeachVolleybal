@@ -31,7 +31,6 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
     private int phase = 4;
     private List<List<BeachRound>> rounds = new ArrayList<>();
     private CharSequence[] titles;
-    private boolean isDoubleGender = false;
 
     private SlidingTabLayout mSlidingTabLayout;
 
@@ -52,7 +51,6 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
         setSupportActionBar(toolbar);
 
         if( tournament.getFemaleTournamentCode() != null && tournament.getMaleTournamentCode() != null ){
-            isDoubleGender = true;
             titles = new CharSequence[]{"Male", "Female"};
         }else if( tournament.getFemaleTournamentCode() != null){
             titles = new CharSequence[]{"Female"};
@@ -93,7 +91,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
     private String createRequestMatches(String numberTournament) {
         return "<Request Type=\"GetBeachMatchList\" " +
                 "Fields=\"NoTournament NoInTournament NoTeamA NoTeamB TeamAFederationCode TeamBFederationCode NoRound LocalDate LocalTime TeamAName TeamBName Court PointsTeamASet1 PointsTeamBSet1 PointsTeamASet2 PointsTeamBSet2 PointsTeamASet3 PointsTeamBSet3 DurationSet1 DurationSet2 DurationSet3 ResultType TeamAPositionInMainDraw TeamBPositionInMainDraw\">"+
-                "<Filter NoTournament=\"" + numberTournament + "\" InMainDraw=\"" + (this.phase == 4 ? "true" : "false") + "\" />"+
+                "<Filter NoTournament=\"" + numberTournament + "\" />"+
                 "</Request>";
     }
 
@@ -108,6 +106,24 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_world_tour, menu);
+        MenuItem menuMainDraw = menu.add( getString(R.string.main_draw));
+        menuMainDraw.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                TournamentMatchesActivity.this.phase = 4;
+                showBeachRounds();
+                return true;
+            }
+        });
+        MenuItem menuQuali = menu.add( getString(R.string.qualification));
+        menuQuali.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                TournamentMatchesActivity.this.phase = 3;
+                showBeachRounds();
+                return true;
+            }
+        });
         return true;
     }
 
@@ -128,30 +144,35 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
 
     @Override
     public void update(String result) {
-        List<List<BeachRound>> rounds = null;
+
         try {
-            rounds = BeachMatchesXmlParser.unmarschall(result);
+            this.rounds = BeachMatchesXmlParser.unmarschall(result);
         }catch (Exception ex){
             Log.e("Error no parse", ex.getMessage(), ex);
             Toast.makeText(this,"Error parsing match data", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        for (List<BeachRound> round : rounds) {
-            this.rounds.add(filter(round));
-        }
-
-        if( rounds.isEmpty() ){
+        this.phase = 4;
+        if( this.rounds.isEmpty() ){
             Toast.makeText(this,"Information not yet available", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        showBeachRounds();
+
+    }
+
+    private void showBeachRounds() {
+        List<List<BeachRound>> rounds = new ArrayList<>();
+        for (List<BeachRound> round : this.rounds) {
+            rounds.add(filter(round));
+        }
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager = (ViewPager) this.findViewById(R.id.pager);
 
-        mViewPager.setAdapter(new MatchesPagerAdapter(titles, this.rounds));
-
+        mViewPager.setAdapter(new MatchesPagerAdapter(titles, rounds));
+        mViewPager.getAdapter().notifyDataSetChanged();
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
         mSlidingTabLayout = (SlidingTabLayout) this.findViewById(R.id.tabs);
@@ -168,11 +189,6 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
             }
         });
         mSlidingTabLayout.setViewPager(mViewPager);
-
-        /*
-
-        */
-
     }
 
     private List<BeachRound> filter(List<BeachRound> rounds) {

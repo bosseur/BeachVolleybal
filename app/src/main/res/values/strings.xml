@@ -3,6 +3,9 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="main_draw">Main draw</string>
+    <string name="qualification">Qualification</string>
+
 
     <string name="vis_sdk_url">http://www.fivb.org/Vis2009/XmlRequest.asmx</string>
     <string name="from">from:</string>
