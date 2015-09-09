@@ -1,5 +1,6 @@
 package nl.bosseur.beachvolleybal.activity;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -51,11 +52,11 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
         setSupportActionBar(toolbar);
 
         if( tournament.getFemaleTournamentCode() != null && tournament.getMaleTournamentCode() != null ){
-            titles = new CharSequence[]{"Male", "Female"};
+            titles = new CharSequence[]{getString(R.string.male), getString(R.string.female)};
         }else if( tournament.getFemaleTournamentCode() != null){
-            titles = new CharSequence[]{"Female"};
+            titles = new CharSequence[]{getString(R.string.female)};
         }else{
-            titles = new CharSequence[]{"Male"};
+            titles = new CharSequence[]{getString(R.string.male)};
         }
 
         buscarMatches();
