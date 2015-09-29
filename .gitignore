@@ -11,3 +11,6 @@ gen-external-apklibs/
 build/
 gen/
 lint.xml
+.gradle/2.4/taskArtifacts/cache.properties.lock
+.gradle/2.4/taskArtifacts/cache.properties.lock
+.gradle/2.4/taskArtifacts/cache.properties.lock

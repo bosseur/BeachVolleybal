@@ -17,6 +17,7 @@ import nl.bosseur.beachvolleybal.activity.BeachVolleyBallDelegate;
 
 /**
  * Created by bosseur on 16/06/15.
+ *
  */
 public class FivbRequestTask extends AsyncTask<String, Object, String> {
 
@@ -34,14 +35,7 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
 
     @Override
     protected String doInBackground(final String... params) {
-        ((Activity)beachVolleyBallDelegate).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setMessage(params[0]);
-                progressBar.setIndeterminate(true);
-                progressBar.show();
-            }
-        });
+        showProgress(params[0]);
         String resultado = "";
         HttpURLConnection connection = null;
         try {
@@ -64,6 +58,7 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
         } catch (Exception e) {
             return resultado;
         }finally {
+            hideProgress();
             if (connection != null ){
                 connection.disconnect();
             }
@@ -72,12 +67,30 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
         return resultado;
     }
 
-    @Override
-    protected void onPostExecute(String s) {
-        ((Activity)beachVolleyBallDelegate).runOnUiThread(new Runnable() {
+
+    private void showProgress(final String param) {
+        beachVolleyBallDelegate.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progressBar.hide();
+                beachVolleyBallDelegate.showProgress(param);
+            }
+        });
+    }
+
+    private void hideProgress() {
+        beachVolleyBallDelegate.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                beachVolleyBallDelegate.hideProgress();
+            }
+        });
+    }
+    @Override
+    protected void onPostExecute(String s) {
+        beachVolleyBallDelegate.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                beachVolleyBallDelegate.hideProgress();
             }
         });
         super.onPostExecute(s);

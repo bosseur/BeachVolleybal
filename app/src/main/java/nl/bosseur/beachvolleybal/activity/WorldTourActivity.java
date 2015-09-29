@@ -3,14 +3,12 @@ package nl.bosseur.beachvolleybal.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -30,6 +28,7 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
 
     public static final String TOURNAMENT = "tournament";
     private List<BeachTournament> events;
+    private ListView eventList;
 
 
     @Override
@@ -40,14 +39,15 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setTitle("World Beach Tour");
         setSupportActionBar(toolbar);
-
+        eventList = (ListView) findViewById(R.id.eventList);
         buscarTournaments();
 
     }
 
-    private void buscarTournaments(){
+    protected void buscarTournaments(){
+        eventList.setVisibility(View.GONE);
         FivbRequestTask task = new FivbRequestTask(this);
-        task.execute("Retrieving season tournaments");
+        task.execute(getString(R.string.loading_calendar));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
 
     @Override
     public void update(String result) {
-
+        eventList.setVisibility(View.VISIBLE);
         try {
             this.events = BeachTournamentXmlParser.unmarschall(result);
             this.events = filter(events);
@@ -113,16 +113,15 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
                 }
             });
         } catch (Exception e) {
-            Log.e("ParseEvento", e.getMessage(),e);
-            Toast.makeText(this,"Erro ao ler eventos", Toast.LENGTH_LONG).show();
+            //Log.e("ParseEvento", e.getMessage(),e);
+            Toast.makeText(this,"Error reading world tour events", Toast.LENGTH_LONG).show();
         }
 
 
     }
 
     private List<BeachTournament> filter(List<BeachTournament> events) {
-        List<BeachTournament> eventsWorldTour = new ArrayList<BeachTournament>();
-        BeachTournament tournament = null;
+        List<BeachTournament> eventsWorldTour = new ArrayList<>();
         for (BeachTournament event: events){
 
             if( event.getStatus() != 0 &&  (event.getType() == 0 ||
@@ -135,13 +134,12 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
                     eventsWorldTour.add(event);
                 }else{
                     if( event.getType() == 0 ) {
-                        tournament.setOtherGenderTournamentCode(event.getNumber().toString());
+                        event.setOtherGenderTournamentCode(event.getNumber().toString());
                     }else{
-                        tournament.setOtherGenderTournamentCode(event.getNumber().toString());
+                        event.setOtherGenderTournamentCode(event.getNumber().toString());
                     }
 
                 }
-                tournament = event;
             }
 
         }

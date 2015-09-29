@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Beach Volleybal</string>
+    <string name="app_name">Beach Tour</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -14,8 +14,8 @@
     <string name="menuitem_refresh">Update</string>
     <string name="title_activity_tournament_matches">Matches Tournament</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="loading_calendar">Loading season tournaments...</string>
+    <string name="retrieving_matches">Retrieving matches\n</string>
 </resources>

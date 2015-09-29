@@ -1,11 +1,9 @@
 package nl.bosseur.beachvolleybal.activity;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -67,13 +65,13 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
     private void buscarMatches(){
         this.rounds.clear();
         FivbRequestTask task = new FivbRequestTask(this);
-        task.execute("Retrieving matches\n" + tournament.getTile());
+        task.execute(getString(R.string.retrieving_matches) + tournament.getTile());
     }
 
     @Override
     public String createFivbTourRequest() {
-        String requestRounds = "";
-        String requestMatches = "";
+        String requestRounds ;
+        String requestMatches ;
 
         if( tournament.getFemaleTournamentCode() != null && tournament.getMaleTournamentCode() != null ){
             requestRounds = createRequestRound(tournament.getMaleTournamentCode());
@@ -149,7 +147,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
         try {
             this.rounds = BeachMatchesXmlParser.unmarschall(result);
         }catch (Exception ex){
-            Log.e("Error no parse", ex.getMessage(), ex);
+            //Log.e("Error no parse", ex.getMessage(), ex);
             Toast.makeText(this,"Error parsing match data", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -193,7 +191,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
     }
 
     private List<BeachRound> filter(List<BeachRound> rounds) {
-        List<BeachRound> roundsSelectedPhase = new ArrayList<BeachRound>();
+        List<BeachRound> roundsSelectedPhase = new ArrayList<>();
         for (BeachRound round: rounds){
             if( round.getPhase() == this.phase ){
                 roundsSelectedPhase.add( round );
