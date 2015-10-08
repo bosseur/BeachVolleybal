@@ -4,8 +4,10 @@
     <color name="event_text">#053B8A</color>
     <color name="color_even">#FFFFFF</color>
     <color name="event_even">#FFFFFF</color>
-    <color name="ColorPrimary">#053B8A</color>
+    <color name="ColorPrimary">#053b8a</color>
     <color name="ColorPrimaryDark">#032960</color>
     <color name="tabsScrollColor">#5075ad</color>
     <color name="gradient_start">#B8C1CF</color>
+    <color name="accent_material_light">#408dff</color>
+    <color name="black">#032960</color>
 </resources>

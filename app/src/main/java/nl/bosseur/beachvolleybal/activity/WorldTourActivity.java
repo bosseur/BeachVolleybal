@@ -122,6 +122,7 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
 
     private List<BeachTournament> filter(List<BeachTournament> events) {
         List<BeachTournament> eventsWorldTour = new ArrayList<>();
+        BeachTournament tournament = null;
         for (BeachTournament event: events){
 
             if( event.getStatus() != 0 &&  (event.getType() == 0 ||
@@ -134,13 +135,14 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
                     eventsWorldTour.add(event);
                 }else{
                     if( event.getType() == 0 ) {
-                        event.setOtherGenderTournamentCode(event.getNumber().toString());
+                        tournament.setOtherGenderTournamentCode(event.getNumber().toString());
                     }else{
-                        event.setOtherGenderTournamentCode(event.getNumber().toString());
+                        tournament.setOtherGenderTournamentCode(event.getNumber().toString());
                     }
 
                 }
             }
+            tournament = event;
 
         }
 
