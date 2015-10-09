@@ -3,11 +3,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="1dp"
     android:paddingRight="0dp"
     android:paddingLeft="0dp"
-    android:paddingBottom="1dp"
-    android:divider="@color/ColorPrimary">
+    android:showDividers="middle">
 
     <TextView
         android:id="@+id/group_name"
@@ -35,7 +33,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/color_even"
-        >
+        />
 
-    </LinearLayout>
 </LinearLayout>

@@ -11,6 +11,7 @@
         layout="@layout/tool_bar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:elevation="0dp"
         />
 
     <include layout="@layout/progressbar" />
@@ -19,7 +20,8 @@
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ColorPrimary"/>
+        android:background="@color/ColorPrimary"
+        android:elevation="4dp"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"

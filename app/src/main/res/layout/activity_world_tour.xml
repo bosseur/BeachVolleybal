@@ -19,7 +19,8 @@
         android:dividerHeight="1dp"
         android:paddingRight="5dp"
         android:paddingLeft="5dp"
-        android:divider="@color/ColorPrimary"
+        android:divider="@drawable/divider"
+        android:showDividers="middle"
         android:visibility="gone"
         >
     </ListView>

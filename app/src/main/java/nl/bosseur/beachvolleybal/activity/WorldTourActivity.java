@@ -15,7 +15,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import nl.bosseur.beachvolleybal.R;
 import nl.bosseur.beachvolleybal.adapter.WorldTourAdapter;
@@ -121,8 +125,8 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
     }
 
     private List<BeachTournament> filter(List<BeachTournament> events) {
-        List<BeachTournament> eventsWorldTour = new ArrayList<>();
-        BeachTournament tournament = null;
+        Map<Integer, BeachTournament> eventsWorldTour = new TreeMap<>();
+
         for (BeachTournament event: events){
 
             if( event.getStatus() != 0 &&  (event.getType() == 0 ||
@@ -131,9 +135,10 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
                     event.getType() == 5 ||
                     event.getType() == 32 ||
                     event.getType() == 33) && event.getEventNumber() != 0 ){
-                if(!eventsWorldTour.contains(event)) {
-                    eventsWorldTour.add(event);
+                if(!eventsWorldTour.containsKey(event.getEventNumber())) {
+                    eventsWorldTour.put(event.getEventNumber(), event);
                 }else{
+                    BeachTournament tournament = eventsWorldTour.get(event.getEventNumber());
                     if( event.getType() == 0 ) {
                         tournament.setOtherGenderTournamentCode(event.getNumber().toString());
                     }else{
@@ -142,10 +147,10 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
 
                 }
             }
-            tournament = event;
-
         }
 
-        return eventsWorldTour;
+        ArrayList<BeachTournament> tournaments = new ArrayList<>(eventsWorldTour.values());
+        Collections.sort(tournaments);
+        return tournaments;
     }
 }
