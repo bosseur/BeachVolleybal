@@ -4,7 +4,7 @@
 .idea/
 out/
 gen-external-apklibs/
-
+local.properties
 ########### Android ###########
 
 .gradle/
