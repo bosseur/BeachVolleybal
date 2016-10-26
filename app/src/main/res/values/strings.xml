@@ -18,4 +18,6 @@
     <string name="female">Female</string>
     <string name="loading_calendar">Loading season tournaments...</string>
     <string name="retrieving_matches">Retrieving matches\n</string>
+
+    <string name="dateformat">yyyy-MM-dd</string>
 </resources>

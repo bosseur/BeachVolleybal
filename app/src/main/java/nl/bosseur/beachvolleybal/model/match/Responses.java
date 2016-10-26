@@ -19,7 +19,7 @@ public class Responses {
     @ElementList(inline = true)
     private List<TournamentMatchList> matches;
 
-    @Attribute(name = "ServerTime")
+    @Attribute(name = "ServerTime", required = false)
     private BigDecimal servertime;
 
     public List<BeachRoundList> getRounds() {

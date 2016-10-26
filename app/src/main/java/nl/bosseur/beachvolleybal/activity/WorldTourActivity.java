@@ -2,6 +2,7 @@ package nl.bosseur.beachvolleybal.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import nl.bosseur.beachvolleybal.BeachVolleyApplication;
+import nl.bosseur.beachvolleybal.ExecutionStateEnum;
 import nl.bosseur.beachvolleybal.R;
 import nl.bosseur.beachvolleybal.adapter.WorldTourAdapter;
 import nl.bosseur.beachvolleybal.model.tournament.BeachTournament;
@@ -31,27 +34,49 @@ import nl.bosseur.beachvolleybal.tasks.FivbRequestTask;
 public class WorldTourActivity extends BeachVolleyBallDelegate {
 
     public static final String TOURNAMENT = "tournament";
-    private List<BeachTournament> events;
     private ListView eventList;
-
+    private DateFormat df;
+    private ExecutionStateEnum state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.df = new SimpleDateFormat(getString(R.string.dateformat));
         setContentView(R.layout.activity_world_tour);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setTitle("World Beach Tour");
         setSupportActionBar(toolbar);
         eventList = (ListView) findViewById(R.id.eventList);
-        buscarTournaments();
-
+        state = ExecutionStateEnum.START;
     }
 
-    protected void buscarTournaments(){
+    @Override
+    protected void onResume() {
+        super.onResume();
+        state.execute(this);
+    }
+
+    @Override
+    public void executeTask() {
         eventList.setVisibility(View.GONE);
+        this.state = ExecutionStateEnum.RUNNING;
         FivbRequestTask task = new FivbRequestTask(this);
         task.execute(getString(R.string.loading_calendar));
+        this.state.execute(this);
+    }
+
+    @Override
+    public BeachVolleyApplication getBeachVolleyApplication() {
+        return (BeachVolleyApplication)getApplication();
+    }
+
+    public ExecutionStateEnum getState() {
+        return state;
+    }
+
+    public void setState(ExecutionStateEnum state) {
+        this.state = state;
     }
 
     @Override
@@ -66,16 +91,11 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
 
     private String getStartDate(Calendar cal) {
         cal.set(cal.get(Calendar.YEAR), Calendar.JANUARY, 1);
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
-
         return df.format(cal.getTime());
     }
 
     private String getEndDate(Calendar cal) {
         cal.set(cal.get(Calendar.YEAR), Calendar.DECEMBER, 31);
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
         return df.format(cal.getTime());
     }
 
@@ -91,7 +111,7 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
         int id = item.getItemId();
 
         if (id == R.id.refresh) {
-            buscarTournaments();
+            executeTask();
             return true;
         }
 
@@ -100,28 +120,32 @@ public class WorldTourActivity extends BeachVolleyBallDelegate {
 
     @Override
     public void update(String result) {
-        eventList.setVisibility(View.VISIBLE);
+        this.state = ExecutionStateEnum.RECEIVED;
         try {
-            this.events = BeachTournamentXmlParser.unmarschall(result);
-            this.events = filter(events);
-            WorldTourAdapter adapter = new WorldTourAdapter(this, events);
-            ListView listView = (ListView) findViewById(R.id.eventList);
-            listView.setAdapter( adapter );
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    BeachTournament tournament = WorldTourActivity.this.events.get(position);
-                    Intent intent = new Intent(WorldTourActivity.this, TournamentMatchesActivity.class);
-                    intent.putExtra(WorldTourActivity.TOURNAMENT, tournament);
-                    startActivity(intent);
-                }
-            });
+            getBeachVolleyApplication().getEvents().addAll(filter(BeachTournamentXmlParser.unmarschall(result)));
+            showResults();
         } catch (Exception e) {
             //Log.e("ParseEvento", e.getMessage(),e);
             Toast.makeText(this,"Error reading world tour events", Toast.LENGTH_LONG).show();
         }
 
 
+    }
+
+    public void showResults() {
+        eventList.setVisibility(View.VISIBLE);
+        WorldTourAdapter adapter = new WorldTourAdapter(this, getBeachVolleyApplication().getEvents());
+        ListView listView = (ListView) findViewById(R.id.eventList);
+        listView.setAdapter( adapter );
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				BeachTournament tournament = WorldTourActivity.this.getBeachVolleyApplication().getEvents().get(position);
+				Intent intent = new Intent(WorldTourActivity.this, TournamentMatchesActivity.class);
+				intent.putExtra(WorldTourActivity.TOURNAMENT, tournament);
+				startActivity(intent);
+			}
+		});
     }
 
     private List<BeachTournament> filter(List<BeachTournament> events) {

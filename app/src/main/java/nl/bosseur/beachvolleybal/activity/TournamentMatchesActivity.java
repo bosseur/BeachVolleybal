@@ -16,6 +16,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.bosseur.beachvolleybal.BeachVolleyApplication;
+import nl.bosseur.beachvolleybal.ExecutionStateEnum;
 import nl.bosseur.beachvolleybal.R;
 import nl.bosseur.beachvolleybal.model.match.BeachRound;
 import nl.bosseur.beachvolleybal.model.match.TournamentMatch;
@@ -28,16 +30,23 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
 
     private BeachTournament tournament;
     private int phase = 4;
-    private List<List<BeachRound>> rounds = new ArrayList<>();
     private CharSequence[] titles;
 
     private SlidingTabLayout mSlidingTabLayout;
 
+    private ExecutionStateEnum state;
     /**
      * A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
      */
     private ViewPager mViewPager;
 
+    public ExecutionStateEnum getState() {
+        return state;
+    }
+
+    public void setState(ExecutionStateEnum state) {
+        this.state = state;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,15 +66,28 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
             titles = new CharSequence[]{getString(R.string.male)};
         }
 
-        buscarMatches();
-
+        this.state = ExecutionStateEnum.START;
 
     }
 
-    private void buscarMatches(){
-        this.rounds.clear();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.state.execute(this);
+    }
+
+    @Override
+    public void executeTask() {
+        getBeachVolleyApplication().getBeachMatches().clear();
+        this.state = ExecutionStateEnum.RUNNING;
         FivbRequestTask task = new FivbRequestTask(this);
         task.execute(getString(R.string.retrieving_matches) + tournament.getTile());
+        this.state.execute(this);
+    }
+
+    @Override
+    public BeachVolleyApplication getBeachVolleyApplication() {
+        return (BeachVolleyApplication) this.getApplication();
     }
 
     @Override
@@ -110,7 +132,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 TournamentMatchesActivity.this.phase = 4;
-                showBeachRounds();
+                showResults();
                 return true;
             }
         });
@@ -119,7 +141,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 TournamentMatchesActivity.this.phase = 3;
-                showBeachRounds();
+                showResults();
                 return true;
             }
         });
@@ -133,7 +155,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
-            buscarMatches();
+            executeTask();
             return true;
         }
 
@@ -143,27 +165,26 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
 
     @Override
     public void update(String result) {
-
+        this.state = ExecutionStateEnum.RECEIVED;
         try {
-            this.rounds = BeachMatchesXmlParser.unmarschall(result);
+            getBeachVolleyApplication().getBeachMatches().clear();
+            getBeachVolleyApplication().getBeachMatches().addAll( BeachMatchesXmlParser.unmarschall(result) );
         }catch (Exception ex){
             //Log.e("Error no parse", ex.getMessage(), ex);
             Toast.makeText(this,"Error parsing match data", Toast.LENGTH_SHORT).show();
             return;
         }
         this.phase = 4;
-        if( this.rounds.isEmpty() ){
+        if( getBeachVolleyApplication().getBeachMatches().isEmpty() ){
             Toast.makeText(this,"Information not yet available", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        showBeachRounds();
-
+        this.state.execute(this);
     }
 
-    private void showBeachRounds() {
+    public void showResults() {
         List<List<BeachRound>> rounds = new ArrayList<>();
-        for (List<BeachRound> round : this.rounds) {
+        for (List<BeachRound> round : getBeachVolleyApplication().getBeachMatches()) {
             rounds.add(filter(round));
         }
 

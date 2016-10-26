@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "nl.bosseur.beachvolleybal"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 22
-        versionCode 1
+        versionCode 22
         versionName "1.0"
     }
     buildTypes {
@@ -29,4 +29,23 @@ dependencies {
         exclude module: 'stax-api'
         exclude module: 'xpp3'
     }
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        credentials {
+            username "${project.getProperty('artifactory.username')}"
+            password "${project.getProperty('artifactory.password')}"
+        }
+        url "http://psdartifactory.sicpa-net.ads:8081/artifactory/libs-snapshots-local"
+    }
+    maven {
+        credentials {
+            username "${project.getProperty('artifactory.username')}"
+            password "${project.getProperty('artifactory.password')}"
+        }
+        url "http://psdartifactory.sicpa-net.ads:8081/artifactory/libs-releases-local"
+    }
+    maven { url "https://jitpack.io" }
 }

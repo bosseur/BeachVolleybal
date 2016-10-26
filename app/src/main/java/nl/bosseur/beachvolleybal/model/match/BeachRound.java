@@ -39,7 +39,7 @@ public class BeachRound implements Serializable, Comparable<BeachRound> {
     private int number;
 
     @Attribute(required = false)
-    private List<TournamentMatch> matches = new ArrayList<TournamentMatch>();
+    private List<TournamentMatch> matches = new ArrayList<>();
 
     public void addMatch(TournamentMatch match){
         this.matches.add(match);

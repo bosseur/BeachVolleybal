@@ -16,7 +16,7 @@ public class Responses {
     @ElementList(name = "BeachTournaments")
     private List<BeachTournament> eventList;
 
-    @Attribute(name = "ServerTime")
+    @Attribute(name = "ServerTime", required = false)
     private BigDecimal servertime;
 
     public List<BeachTournament> getTournaments() {

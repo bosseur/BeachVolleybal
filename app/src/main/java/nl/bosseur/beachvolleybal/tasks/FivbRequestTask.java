@@ -7,9 +7,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 import nl.bosseur.beachvolleybal.R;
@@ -30,24 +32,19 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
     public FivbRequestTask(BeachVolleyBallDelegate beachActivity) {
         REQUEST_URL = beachActivity.getResources().getString(R.string.vis_sdk_url);
         this.beachVolleyBallDelegate = beachActivity;
+        this.beachVolleyBallDelegate.getBeachVolleyApplication().registerAsyncTask(this);
         progressBar = new ProgressDialog(beachActivity);
     }
 
     @Override
     protected String doInBackground(final String... params) {
-        showProgress(params[0]);
         String resultado = "";
         HttpURLConnection connection = null;
         try {
-            this.url = new URL(REQUEST_URL + "?Request=" + URLEncoder.encode(beachVolleyBallDelegate.createFivbTourRequest(), "UTF-8"));
-            connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestProperty("Accept", "application/xml");
-            connection.setRequestMethod("GET");
-            connection.setDoInput(true);
-            connection.connect();
+            connection = getHttpURLConnection();
 
             InputStream is = connection.getInputStream();
-            Scanner scanner = new Scanner(is, "UTF-8");
+            Scanner scanner = new Scanner(is, StandardCharsets.UTF_8.name());
             scanner.useDelimiter("\\A");
 
             resultado = scanner.next();
@@ -58,7 +55,6 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
         } catch (Exception e) {
             return resultado;
         }finally {
-            hideProgress();
             if (connection != null ){
                 connection.disconnect();
             }
@@ -67,33 +63,21 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
         return resultado;
     }
 
-
-    private void showProgress(final String param) {
-        beachVolleyBallDelegate.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                beachVolleyBallDelegate.showProgress(param);
-            }
-        });
+    private HttpURLConnection getHttpURLConnection() throws Exception {
+        this.url = new URL(REQUEST_URL + "?Request=" + URLEncoder.encode(beachVolleyBallDelegate.createFivbTourRequest(), "UTF-8"));
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        connection.setRequestProperty("Accept", "application/xml");
+        connection.setRequestMethod("GET");
+        connection.setDoInput(true);
+        connection.connect();
+        return connection;
     }
 
-    private void hideProgress() {
-        beachVolleyBallDelegate.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                beachVolleyBallDelegate.hideProgress();
-            }
-        });
-    }
+
     @Override
-    protected void onPostExecute(String s) {
-        beachVolleyBallDelegate.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                beachVolleyBallDelegate.hideProgress();
-            }
-        });
-        super.onPostExecute(s);
-        this.beachVolleyBallDelegate.update(s);
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        beachVolleyBallDelegate.getBeachVolleyApplication().unregisterAsyncTask(this);
+        this.beachVolleyBallDelegate.update(result);
     }
 }
