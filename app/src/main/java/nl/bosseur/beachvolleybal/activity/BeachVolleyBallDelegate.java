@@ -40,6 +40,10 @@ public abstract class BeachVolleyBallDelegate extends Fragment{
         tvLoading.setText(messageLoading);
     }
 
+    public BeachVolleyApplication getBeachVolleyApplication() {
+        return (BeachVolleyApplication) getActivity().getApplication();
+    }
+
     public abstract ExecutionStateEnum getState();
 
     public abstract void setState(ExecutionStateEnum state);
@@ -47,8 +51,6 @@ public abstract class BeachVolleyBallDelegate extends Fragment{
     public abstract void showResults();
 
     public abstract void executeTask();
-
-    public abstract BeachVolleyApplication getBeachVolleyApplication();
 
     public abstract String createFivbTourRequest();
 

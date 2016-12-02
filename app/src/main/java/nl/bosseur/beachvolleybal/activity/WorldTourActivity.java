@@ -1,6 +1,7 @@
 package nl.bosseur.beachvolleybal.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,7 +11,9 @@ import android.view.MenuItem;
 
 import nl.bosseur.beachvolleybal.BeachVolleyApplication;
 import nl.bosseur.beachvolleybal.R;
+import nl.bosseur.beachvolleybal.fragments.MatchesFragment;
 import nl.bosseur.beachvolleybal.fragments.WorldTourListFragment;
+import nl.bosseur.beachvolleybal.model.tournament.BeachTournament;
 
 
 public class WorldTourActivity extends AppCompatActivity {
@@ -46,13 +49,17 @@ public class WorldTourActivity extends AppCompatActivity {
             firstFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction
-                    .replace(R.id.fragment_container, firstFragment);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+            startFragment(firstFragment);
         }
 
+    }
+
+    private void startFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction
+				.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -64,24 +71,12 @@ public class WorldTourActivity extends AppCompatActivity {
         return (BeachVolleyApplication)getApplication();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_world_tour, menu);
-        return true;
+    public void showMatches(BeachTournament tournament) {
+        Bundle arguments = new Bundle();
+        arguments.putSerializable("tournament", tournament);
+        MatchesFragment matchesFragment = new MatchesFragment();
+        matchesFragment.setArguments(arguments);
+
+        startFragment(matchesFragment);
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.refresh) {
-//            executeTask();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
 }

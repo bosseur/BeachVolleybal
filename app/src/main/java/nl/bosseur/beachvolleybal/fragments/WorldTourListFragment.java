@@ -1,13 +1,11 @@
 package nl.bosseur.beachvolleybal.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,11 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import nl.bosseur.beachvolleybal.BeachVolleyApplication;
 import nl.bosseur.beachvolleybal.ExecutionStateEnum;
 import nl.bosseur.beachvolleybal.R;
 import nl.bosseur.beachvolleybal.activity.BeachVolleyBallDelegate;
-import nl.bosseur.beachvolleybal.activity.TournamentMatchesActivity;
 import nl.bosseur.beachvolleybal.activity.WorldTourActivity;
 import nl.bosseur.beachvolleybal.adapter.WorldTourAdapter;
 import nl.bosseur.beachvolleybal.model.tournament.BeachTournament;
@@ -85,6 +81,11 @@ public class WorldTourListFragment extends BeachVolleyBallDelegate {
 	@Override
 	public void onResume() {
 		super.onResume();
+		Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
+		toolbar.setTitle(getString(R.string.title_world_beach_tour));
+		if(!getBeachVolleyApplication().getEvents().isEmpty()){
+			state = ExecutionStateEnum.RECEIVED;
+		}
 		state.execute(this);
 	}
 
@@ -117,16 +118,13 @@ public class WorldTourListFragment extends BeachVolleyBallDelegate {
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(((parent, view, position, id) -> {
 			BeachTournament tournament = WorldTourListFragment.this.getBeachVolleyApplication().getEvents().get(position);
-//				Intent intent = new Intent(WorldTourListFragment.this, TournamentMatchesActivity.class);
-//				intent.putExtra(WorldTourActivity.TOURNAMENT, tournament);
-//				startActivity(intent);
+			((WorldTourActivity)getActivity()).showMatches(tournament);
 		}));
 
 	}
 
 	private List<BeachTournament> filter(List<BeachTournament> events) {
 		Map<Integer, BeachTournament> eventsWorldTour = new TreeMap<>();
-
 
 		for (BeachTournament event : events) {
 
@@ -158,11 +156,6 @@ public class WorldTourListFragment extends BeachVolleyBallDelegate {
 		FivbRequestTask task = new FivbRequestTask(this);
 		task.execute(getString(R.string.loading_calendar));
 		this.state.execute(this);
-	}
-
-	@Override
-	public BeachVolleyApplication getBeachVolleyApplication() {
-		return (BeachVolleyApplication) getActivity().getApplication();
 	}
 
 	@Override
