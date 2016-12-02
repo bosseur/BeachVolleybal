@@ -62,7 +62,7 @@ public class WorldTourActivity extends AppCompatActivity {
     private void startFragment(Fragment fragment, Integer id) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(id, fragment);
-        if(isTablet()) {
+        if(!isTablet()) {
             fragmentTransaction.addToBackStack(null);
         }
         fragmentTransaction.commit();
