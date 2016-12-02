@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -66,9 +67,6 @@ public class MatchesFragment extends BeachVolleyBallDelegate {
 			}
 		}
 
-		Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
-		toolbar.setTitle(tournament.getTile());
-
 		this.state = ExecutionStateEnum.START;
 
 		return  matchesView;
@@ -92,36 +90,47 @@ public class MatchesFragment extends BeachVolleyBallDelegate {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.menu_world_tour, menu);
-		MenuItem menuMainDraw = menu.add( getString(R.string.main_draw));
-		menuMainDraw.setOnMenuItemClickListener(item ->{
-			MatchesFragment.this.phase = 4;
-			showResults();
-			return true;
-		});
-		MenuItem menuQuali = menu.add( getString(R.string.qualification));
-		menuQuali.setOnMenuItemClickListener(item -> {
-			MatchesFragment.this.phase = 3;
-			showResults();
-			return true;
+		if( this.tournament != null) {
+			super.onCreateOptionsMenu(menu, inflater);
+			inflater.inflate(R.menu.menu_world_tour, menu);
+			menu.findItem(R.id.refresh).setOnMenuItemClickListener(item ->{
+				ExecutionStateEnum.START.execute(this);
+				return true;
+			});
+			MenuItem menuMainDraw = menu.add(getString(R.string.main_draw));
+			menuMainDraw.setOnMenuItemClickListener(item -> {
+				MatchesFragment.this.phase = 4;
+				showResults();
+				return true;
+			});
+			MenuItem menuQuali = menu.add(getString(R.string.qualification));
+			menuQuali.setOnMenuItemClickListener(item -> {
+				MatchesFragment.this.phase = 3;
+				showResults();
+				return true;
 
-		});
+			});
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		this.state.execute(this);
+		if( tournament != null) {
+			Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
+			toolbar.setTitle(tournament.getTile());
+			((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+			this.state.execute(this);
+		}
 	}
 
 	@Override
 	public void executeTask() {
 		getBeachVolleyApplication().getBeachMatches().clear();
         showProgress(getString(R.string.retrieving_matches) + tournament.getTile());
-		this.state = ExecutionStateEnum.RUNNING;
         FivbRequestTask task = new FivbRequestTask(this);
         task.execute(getString(R.string.retrieving_matches) + tournament.getTile());
+		this.state = ExecutionStateEnum.RUNNING;
         this.state.execute(this);
 	}
 
@@ -159,21 +168,6 @@ public class MatchesFragment extends BeachVolleyBallDelegate {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		int id = item.getItemId();
-
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.refresh) {
-			ExecutionStateEnum.START.execute(this);
-			return true;
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
-
-
-	//    @Override
 	public void update(String result) {
 		this.state = ExecutionStateEnum.RECEIVED;
 		try {

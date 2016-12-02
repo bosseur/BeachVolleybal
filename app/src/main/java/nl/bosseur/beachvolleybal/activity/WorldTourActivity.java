@@ -26,10 +26,6 @@ public class WorldTourActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_world_tour);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar.setTitle("World Beach Tour");
-        setSupportActionBar(toolbar);
-
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
@@ -49,21 +45,24 @@ public class WorldTourActivity extends AppCompatActivity {
             firstFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, firstFragment);
             if(isTablet()){
-                startFragment(firstFragment, R.id.fragment_container);
-                startFragment(new MatchesFragment(), R.id.fragment_matches);
-            }else {
-                startFragment(firstFragment, R.id.fragment_container);
+                fragmentTransaction.replace(R.id.fragment_matches, new MatchesFragment());
+            }else{
+                fragmentTransaction.addToBackStack(null);
             }
+
+            fragmentTransaction.commit();
+
         }
 
     }
 
     private void startFragment(Fragment fragment, Integer id) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction
-				.replace(id, fragment);
-        if(!isTablet()) {
+        fragmentTransaction.replace(id, fragment);
+        if(isTablet()) {
             fragmentTransaction.addToBackStack(null);
         }
         fragmentTransaction.commit();
@@ -84,11 +83,11 @@ public class WorldTourActivity extends AppCompatActivity {
         MatchesFragment matchesFragment = new MatchesFragment();
         matchesFragment.setArguments(arguments);
 
+        int idFragment = R.id.fragment_container;
         if(isTablet()){
-            startFragment(matchesFragment, R.id.fragment_matches);
-        }else {
-            startFragment(matchesFragment, R.id.fragment_container);
+            idFragment = R.id.fragment_matches;
         }
+        startFragment(matchesFragment, idFragment);
     }
 
     public boolean isTablet() {

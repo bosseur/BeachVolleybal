@@ -2,6 +2,7 @@ package nl.bosseur.beachvolleybal.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,6 +83,7 @@ public class WorldTourListFragment extends BeachVolleyBallDelegate {
 		super.onResume();
 		Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
 		toolbar.setTitle(getString(R.string.title_world_beach_tour));
+		((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 		if(!getBeachVolleyApplication().getEvents().isEmpty()){
 			state = ExecutionStateEnum.RECEIVED;
 		}
@@ -94,6 +96,7 @@ public class WorldTourListFragment extends BeachVolleyBallDelegate {
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.fragment_world_tour_list, container, false);
+
 		eventList = (ListView) view.findViewById(R.id.eventList);
 		return view;
 	}
@@ -113,9 +116,8 @@ public class WorldTourListFragment extends BeachVolleyBallDelegate {
 		eventList.setVisibility(View.VISIBLE);
 		WorldTourActivity activity = (WorldTourActivity) getActivity();
 		WorldTourAdapter adapter = new WorldTourAdapter(activity, activity.getBeachVolleyApplication().getEvents());
-		ListView listView = (ListView) activity.findViewById(R.id.eventList);
-		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(((parent, view, position, id) -> {
+		eventList.setAdapter(adapter);
+		eventList.setOnItemClickListener(((parent, view, position, id) -> {
 			BeachTournament tournament = WorldTourListFragment.this.getBeachVolleyApplication().getEvents().get(position);
 			((WorldTourActivity)getActivity()).showMatches(tournament);
 		}));

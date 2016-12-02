@@ -10,9 +10,7 @@
         android:id="@+id/tool_bar"
         layout="@layout/tool_bar"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:elevation="0dp"
-        />
+        android:layout_width="match_parent" />
 
     <include layout="@layout/progressbar" />
 
