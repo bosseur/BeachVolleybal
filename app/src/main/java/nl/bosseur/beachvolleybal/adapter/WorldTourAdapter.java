@@ -1,5 +1,6 @@
 package nl.bosseur.beachvolleybal.adapter;
 
+import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -18,8 +19,8 @@ import nl.bosseur.beachvolleybal.model.tournament.BeachTournament;
  */
 public class WorldTourAdapter extends BaseAdapter{
 
-    private  List<BeachTournament> events;
-    private  WorldTourActivity activity;
+    private List<BeachTournament> events;
+    private Activity activity;
 
     public WorldTourAdapter(WorldTourActivity worldTourActivity, List<BeachTournament> events) {
         this.events = events;

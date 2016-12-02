@@ -108,6 +108,15 @@ public class BeachTournament implements Comparable<BeachTournament>, Serializabl
         this.tournamentCode = tournamentCode;
     }
 
+    public boolean isWorldTourEvent(){
+        return this.getStatus() != 0 &&  (this.getType() == 0 ||
+                this.getType() == 1 ||
+                this.getType() == 4 ||
+                this.getType() == 5 ||
+                this.getType() == 32 ||
+                this.getType() == 33) && this.getEventNumber() != 0;
+    }
+
     @Override
     public String toString() {
         return "BeachTournament{" +

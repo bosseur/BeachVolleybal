@@ -3,6 +3,7 @@ package nl.bosseur.beachvolleybal.activity;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +27,7 @@ import nl.bosseur.beachvolleybal.model.util.BeachMatchesXmlParser;
 import nl.bosseur.beachvolleybal.tasks.FivbRequestTask;
 import nl.bosseur.beachvolleybal.view.SlidingTabLayout;
 
-public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
+public class TournamentMatchesActivity extends AppCompatActivity {
 
     private BeachTournament tournament;
     private int phase = 4;
@@ -47,6 +48,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
     public void setState(ExecutionStateEnum state) {
         this.state = state;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,24 +75,25 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
     @Override
     protected void onResume() {
         super.onResume();
-        this.state.execute(this);
+//        this.state.execute(this);
     }
 
-    @Override
+//    @Override
     public void executeTask() {
         getBeachVolleyApplication().getBeachMatches().clear();
+//        showProgress(getString(R.string.retrieving_matches) + tournament.getTile());
         this.state = ExecutionStateEnum.RUNNING;
-        FivbRequestTask task = new FivbRequestTask(this);
-        task.execute(getString(R.string.retrieving_matches) + tournament.getTile());
-        this.state.execute(this);
+//        FivbRequestTask task = new FivbRequestTask(this);
+//        task.execute(getString(R.string.retrieving_matches) + tournament.getTile());
+//        this.state.execute(this);
     }
 
-    @Override
+//    @Override
     public BeachVolleyApplication getBeachVolleyApplication() {
         return (BeachVolleyApplication) this.getApplication();
     }
 
-    @Override
+//    @Override
     public String createFivbTourRequest() {
         String requestRounds ;
         String requestMatches ;
@@ -163,7 +166,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
     }
 
 
-    @Override
+//    @Override
     public void update(String result) {
         this.state = ExecutionStateEnum.RECEIVED;
         try {
@@ -179,7 +182,7 @@ public class TournamentMatchesActivity extends BeachVolleyBallDelegate {
             Toast.makeText(this,"Information not yet available", Toast.LENGTH_SHORT).show();
             return;
         }
-        this.state.execute(this);
+//        this.state.execute(this);
     }
 
     public void showResults() {

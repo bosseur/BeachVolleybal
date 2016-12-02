@@ -29,11 +29,11 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
 
     private final ProgressDialog progressBar;
 
-    public FivbRequestTask(BeachVolleyBallDelegate beachActivity) {
-        REQUEST_URL = beachActivity.getResources().getString(R.string.vis_sdk_url);
-        this.beachVolleyBallDelegate = beachActivity;
+    public FivbRequestTask(BeachVolleyBallDelegate beachDelegate) {
+        REQUEST_URL = beachDelegate.getResources().getString(R.string.vis_sdk_url);
+        this.beachVolleyBallDelegate = beachDelegate;
         this.beachVolleyBallDelegate.getBeachVolleyApplication().registerAsyncTask(this);
-        progressBar = new ProgressDialog(beachActivity);
+        progressBar = new ProgressDialog(beachDelegate.getActivity());
     }
 
     @Override
