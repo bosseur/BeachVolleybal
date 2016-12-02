@@ -1,13 +1,9 @@
 package nl.bosseur.beachvolleybal.tasks;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -15,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 import nl.bosseur.beachvolleybal.R;
-import nl.bosseur.beachvolleybal.activity.BeachVolleyBallDelegate;
+import nl.bosseur.beachvolleybal.fragments.BeachVolleyBallDelegate;
 
 /**
  * Created by bosseur on 16/06/15.

@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.bosseur.beachvolleybal.activity.BeachVolleyBallDelegate;
 import nl.bosseur.beachvolleybal.model.match.BeachRound;
 import nl.bosseur.beachvolleybal.model.tournament.BeachTournament;
 

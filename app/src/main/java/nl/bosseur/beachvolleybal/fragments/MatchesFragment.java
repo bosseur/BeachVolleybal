@@ -21,8 +21,6 @@ import java.util.List;
 
 import nl.bosseur.beachvolleybal.ExecutionStateEnum;
 import nl.bosseur.beachvolleybal.R;
-import nl.bosseur.beachvolleybal.activity.BeachVolleyBallDelegate;
-import nl.bosseur.beachvolleybal.activity.TournamentMatchesActivity;
 import nl.bosseur.beachvolleybal.model.match.BeachRound;
 import nl.bosseur.beachvolleybal.model.match.TournamentMatch;
 import nl.bosseur.beachvolleybal.model.tournament.BeachTournament;

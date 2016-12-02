@@ -20,7 +20,6 @@ import java.util.TreeMap;
 
 import nl.bosseur.beachvolleybal.ExecutionStateEnum;
 import nl.bosseur.beachvolleybal.R;
-import nl.bosseur.beachvolleybal.activity.BeachVolleyBallDelegate;
 import nl.bosseur.beachvolleybal.activity.WorldTourActivity;
 import nl.bosseur.beachvolleybal.adapter.WorldTourAdapter;
 import nl.bosseur.beachvolleybal.model.tournament.BeachTournament;

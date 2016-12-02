@@ -1,6 +1,6 @@
 package nl.bosseur.beachvolleybal;
 
-import nl.bosseur.beachvolleybal.activity.BeachVolleyBallDelegate;
+import nl.bosseur.beachvolleybal.fragments.BeachVolleyBallDelegate;
 
 /**
  * Created by ekoetsier on 26/10/2016.

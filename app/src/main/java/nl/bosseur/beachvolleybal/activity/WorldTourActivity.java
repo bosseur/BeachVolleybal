@@ -49,16 +49,23 @@ public class WorldTourActivity extends AppCompatActivity {
             firstFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            startFragment(firstFragment);
+            if(isTablet()){
+                startFragment(firstFragment, R.id.fragment_container);
+                startFragment(new MatchesFragment(), R.id.fragment_matches);
+            }else {
+                startFragment(firstFragment, R.id.fragment_container);
+            }
         }
 
     }
 
-    private void startFragment(Fragment fragment) {
+    private void startFragment(Fragment fragment, Integer id) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction
-				.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
+				.replace(id, fragment);
+        if(!isTablet()) {
+            fragmentTransaction.addToBackStack(null);
+        }
         fragmentTransaction.commit();
     }
 
@@ -77,6 +84,14 @@ public class WorldTourActivity extends AppCompatActivity {
         MatchesFragment matchesFragment = new MatchesFragment();
         matchesFragment.setArguments(arguments);
 
-        startFragment(matchesFragment);
+        if(isTablet()){
+            startFragment(matchesFragment, R.id.fragment_matches);
+        }else {
+            startFragment(matchesFragment, R.id.fragment_container);
+        }
+    }
+
+    public boolean isTablet() {
+        return getResources().getBoolean(R.bool.isTablet);
     }
 }

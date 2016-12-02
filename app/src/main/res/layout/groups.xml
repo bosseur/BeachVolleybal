@@ -7,7 +7,7 @@
     android:dividerHeight="1dp"
     android:divider="@drawable/divider"
     android:dividerPadding="1dp"
-    tools:context="nl.bosseur.beachvolleybal.activity.TournamentMatchesActivity">
+    tools:context=".activity.WorldTourActivity">
 
     <ScrollView
         android:layout_width="match_parent"
