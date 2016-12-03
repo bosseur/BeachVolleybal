@@ -40,7 +40,7 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
             connection = getHttpURLConnection();
 
             InputStream is = connection.getInputStream();
-            Scanner scanner = new Scanner(is, StandardCharsets.UTF_8.name());
+            Scanner scanner = new Scanner(is, "UTF-8");
             scanner.useDelimiter("\\A");
 
             resultado = scanner.next();
