@@ -58,6 +58,8 @@ public abstract class BeachVolleyBallDelegate extends Fragment{
 
     public void hideProgress() {
         LinearLayout lineHeaderProgress = (LinearLayout) getActivity().findViewById(R.id.lineHeaderProgress);
-        lineHeaderProgress.setVisibility(View.GONE);
+        if(lineHeaderProgress!= null ) {
+            lineHeaderProgress.setVisibility(View.GONE);
+        }
     }
 }

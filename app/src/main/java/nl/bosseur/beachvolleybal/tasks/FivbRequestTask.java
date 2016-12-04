@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+import nl.bosseur.beachvolleybal.BeachVolleyApplication;
 import nl.bosseur.beachvolleybal.R;
 import nl.bosseur.beachvolleybal.fragments.BeachVolleyBallDelegate;
 
@@ -73,7 +74,10 @@ public class FivbRequestTask extends AsyncTask<String, Object, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        beachVolleyBallDelegate.getBeachVolleyApplication().unregisterAsyncTask(this);
+        BeachVolleyApplication beachVolleyApplication = beachVolleyBallDelegate.getBeachVolleyApplication();
+        if(beachVolleyApplication!= null) {
+            beachVolleyApplication.unregisterAsyncTask(this);
+        }
         this.beachVolleyBallDelegate.update(result);
     }
 }
