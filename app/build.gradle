@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "24.0.3"
-
+    buildToolsVersion "24.0.2"
+    3
     defaultConfig {
         applicationId "nl.bosseur.beachvolleybal"
         minSdkVersion 16

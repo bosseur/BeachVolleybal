@@ -119,6 +119,7 @@ public class WorldTourListFragment extends BeachVolleyBallDelegate {
 		eventList.setAdapter(adapter);
 		eventList.setOnItemClickListener(((parent, view, position, id) -> {
 			BeachTournament tournament = WorldTourListFragment.this.getBeachVolleyApplication().getEvents().get(position);
+			getBeachVolleyApplication().setTournament(tournament);
 			((WorldTourActivity)getActivity()).showMatches(tournament);
 		}));
 

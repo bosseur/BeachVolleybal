@@ -16,6 +16,7 @@ public class BeachVolleyApplication extends Application {
 
     private List<BeachTournament> events = new ArrayList<>();
     private List<List<BeachRound>> beachMatches = new ArrayList<>();
+    private BeachTournament tournament;
 
     private List<AsyncTask<?, ?, ?>> tasks = new ArrayList<AsyncTask<?,?,?>>();
 
@@ -52,5 +53,13 @@ public class BeachVolleyApplication extends Application {
 
     public List<List<BeachRound>> getBeachMatches() {
         return beachMatches;
+    }
+
+    public BeachTournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(BeachTournament tournament) {
+        this.tournament = tournament;
     }
 }

@@ -57,11 +57,29 @@ public class WorldTourActivity extends AppCompatActivity {
 
             // Add the fragment to the 'fragment_container' FrameLayout
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, firstFragment);
+
             if(isTablet()){
-                fragmentTransaction.replace(R.id.fragment_matches, new MatchesFragment());
+                fragmentTransaction.replace(R.id.fragment_container, firstFragment);
+                MatchesFragment fragment = new MatchesFragment();
+                if( getBeachVolleyApplication().getTournament() != null ){
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("tournament", getBeachVolleyApplication().getTournament());
+                    fragment.setArguments(bundle);
+                }
+                fragmentTransaction.replace(R.id.fragment_matches, fragment);
             }else{
-                fragmentTransaction.addToBackStack(null);
+                if( getBeachVolleyApplication().getTournament() != null ){
+                    MatchesFragment fragment = new MatchesFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("tournament", getBeachVolleyApplication().getTournament());
+                    fragment.setArguments(bundle);
+                    fragmentTransaction.replace(R.id.fragment_container, fragment);
+                }else{
+                    fragmentTransaction.replace(R.id.fragment_container, firstFragment);
+                    fragmentTransaction.addToBackStack(null);
+                }
+
+
             }
 
             fragmentTransaction.commit();
