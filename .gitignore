@@ -1,6 +1,7 @@
 ########### Studio ############
 
 *.iml
+app/*.iml
 .idea/
 out/
 gen-external-apklibs/
