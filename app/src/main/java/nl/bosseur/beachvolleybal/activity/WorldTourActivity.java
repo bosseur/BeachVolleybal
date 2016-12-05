@@ -26,16 +26,27 @@ public class WorldTourActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_world_tour);
 
+
+    }
+
+    private void startFragment(Fragment fragment, Integer id) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(id, fragment);
+        if(!isTablet()) {
+            fragmentTransaction.addToBackStack(null);
+        }else{
+            fragmentTransaction.addToBackStack(null);
+        }
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
 
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
-            }
 
             // Create a new Fragment to be placed in the activity layout
             WorldTourListFragment firstFragment = new WorldTourListFragment();
@@ -56,21 +67,6 @@ public class WorldTourActivity extends AppCompatActivity {
             fragmentTransaction.commit();
 
         }
-
-    }
-
-    private void startFragment(Fragment fragment, Integer id) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(id, fragment);
-        if(!isTablet()) {
-            fragmentTransaction.addToBackStack(null);
-        }
-        fragmentTransaction.commit();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     public BeachVolleyApplication getBeachVolleyApplication() {

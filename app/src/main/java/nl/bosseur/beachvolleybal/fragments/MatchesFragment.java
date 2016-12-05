@@ -55,16 +55,21 @@ public class MatchesFragment extends BeachVolleyBallDelegate {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View matchesView = inflater.inflate(R.layout.activity_tournament_matches, container, false);
+		// Get the ViewPager and set it's PagerAdapter so that it can display items
+		mViewPager = (ViewPager) matchesView.findViewById(R.id.pager);
+        mSlidingTabLayout = (SlidingTabLayout) matchesView.findViewById(R.id.tabs);
 
 		if( getArguments() != null){
 			tournament = (BeachTournament) getArguments().getSerializable("tournament");
-			if( tournament.getFemaleTournamentCode() != null && tournament.getMaleTournamentCode() != null ){
-				titles = new CharSequence[]{getString(R.string.male), getString(R.string.female)};
-			}else if( tournament.getFemaleTournamentCode() != null){
-				titles = new CharSequence[]{getString(R.string.female)};
-			}else{
-				titles = new CharSequence[]{getString(R.string.male)};
-			}
+            if(tournament != null) {
+                if (tournament.getFemaleTournamentCode() != null && tournament.getMaleTournamentCode() != null) {
+                    titles = new CharSequence[]{getString(R.string.male), getString(R.string.female)};
+                } else if (tournament.getFemaleTournamentCode() != null) {
+                    titles = new CharSequence[]{getString(R.string.female)};
+                } else {
+                    titles = new CharSequence[]{getString(R.string.male)};
+                }
+            }
 		}
 
 		this.state = ExecutionStateEnum.START;
@@ -192,14 +197,10 @@ public class MatchesFragment extends BeachVolleyBallDelegate {
 			rounds.add(filter(round));
 		}
 
-		// Get the ViewPager and set it's PagerAdapter so that it can display items
-		mViewPager = (ViewPager) getActivity().findViewById(R.id.pager);
-
 		mViewPager.setAdapter(new MatchesFragment.MatchesPagerAdapter(titles, rounds));
 		mViewPager.getAdapter().notifyDataSetChanged();
 		// Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
 		// it's PagerAdapter set.
-		mSlidingTabLayout = (SlidingTabLayout) getActivity().findViewById(R.id.tabs);
 		mSlidingTabLayout.setDistributeEvenly(true);
 		mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
 			@Override
