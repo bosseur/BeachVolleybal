@@ -25,6 +25,12 @@ public enum ExecutionStateEnum {
 			delegate.hideProgress();
 			delegate.showResults();
 		}
+	},
+	ERROR {
+		@Override
+		public void execute(BeachVolleyBallDelegate delegate) {
+			delegate.hideProgress();
+		}
 	};
 
 	public abstract void execute(BeachVolleyBallDelegate delegate);

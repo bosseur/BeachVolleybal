@@ -179,14 +179,13 @@ public class MatchesFragment extends BeachVolleyBallDelegate {
 			getBeachVolleyApplication().getBeachMatches().clear();
 			getBeachVolleyApplication().getBeachMatches().addAll( BeachMatchesXmlParser.unmarschall(result) );
 		}catch (Exception ex){
-			//Log.e("Error no parse", ex.getMessage(), ex);
 			Toast.makeText(getActivity(),"Error parsing match data", Toast.LENGTH_SHORT).show();
-			return;
+			this.state = ExecutionStateEnum.ERROR;
 		}
 		this.phase = 4;
 		if( getBeachVolleyApplication().getBeachMatches().isEmpty() ){
 			Toast.makeText(getActivity(),"Information not yet available", Toast.LENGTH_SHORT).show();
-			return;
+			this.state = ExecutionStateEnum.ERROR;
 		}
         this.state.execute(this);
 	}

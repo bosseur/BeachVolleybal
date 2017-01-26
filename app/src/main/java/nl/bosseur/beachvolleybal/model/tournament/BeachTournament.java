@@ -6,6 +6,8 @@ import org.simpleframework.xml.Root;
 import java.io.Serializable;
 import java.util.Date;
 
+import nl.bosseur.beachvolleybal.Constants;
+
 /**
  * Created by bosseur on 22/06/15.
  */
@@ -109,12 +111,8 @@ public class BeachTournament implements Comparable<BeachTournament>, Serializabl
     }
 
     public boolean isWorldTourEvent(){
-        return this.getStatus() != 0 &&  (this.getType() == 0 ||
-                this.getType() == 1 ||
-                this.getType() == 4 ||
-                this.getType() == 5 ||
-                this.getType() == 32 ||
-                this.getType() == 33) && this.getEventNumber() != 0;
+
+        return this.getStatus() != 0 &&  (Constants.worldTourCodes.contains(this.getType())) && this.getEventNumber() != 0;
     }
 
     @Override
